@@ -9,6 +9,7 @@
   "author": "Cesar Gonzalez Lopez (DracoGilga)",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
   }
 }

@@ -1,9 +1,10 @@
-const fetch = require('node-fetch');
-const Character = require("./Character");
+const Character = require('../Models/character');
 
 class CharacterController {
     async getAllCharacters() {
         try {
+            const { default: fetch } = await import('node-fetch');
+            
             const response = await fetch("https://rickandmortyapi.com/api/character");
             const data = await response.json();
             const characters = data.results.map((char) => {
@@ -14,19 +15,17 @@ class CharacterController {
 
         } catch (error) {
             console.error("Error al obtener los personajes");
-
             throw new Error("No se pudieron obtener los personajes");
         }
     }
+
     async getAliveCharacters(characters) {
         try {
             const aliveCharacters = characters.filter((char) => char.status === "Alive");
-
             return aliveCharacters;
 
         } catch (error) {
             console.error("Error al obtener los personajes");
-
             throw new Error("No se pudieron obtener los personajes");
         }
     }

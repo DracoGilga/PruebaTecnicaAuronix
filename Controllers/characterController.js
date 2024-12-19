@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Character = require('../Models/character');
 const SpaceReplacement = require('../Utils/spaceReplacement');
 
@@ -5,13 +6,15 @@ class CharacterController {
     async getAllCharacters() {
         try {
             const { default: fetch } = await import('node-fetch');
-            
-            const response = await fetch("https://rickandmortyapi.com/api/character");
+
+            const apiUrl = process.env.CLIENT_HOST + "character";
+
+            const response = await fetch(apiUrl);
             const data = await response.json();
             const characters = data.results.map((char) => {
                 return new Character(char.id, char.name, char.status, char.gender);
             });
-            
+
             return characters;
 
         } catch (error) {

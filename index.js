@@ -1,15 +1,9 @@
-const CharacterController = require('./Controllers/characterController');
-const SpaceReplacement = require('./Utils/spaceReplacement');
+const express = require('express');
+const app = express();
+const port = 3000;
 
-(async () => {
-    try {
-        const characterController = new CharacterController();
-        const allCharacters = await characterController.getAllCharacters();
-        const aliveCharacters = await characterController.getAliveCharacters(allCharacters);
-        const modifiedCharacters = SpaceReplacement.modifyCharacterNames(aliveCharacters);
-        
-        console.log(modifiedCharacters);
-    } catch (error) {
-        console.error("Ha ocurrido un error:", error.message);
-    }
-})();
+app.use('/character', require('./Routes/characterRoutes'));
+
+app.get("*", (req, res) => { res.status(404).send("Recurso no encontrado") });
+
+app.listen(port);

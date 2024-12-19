@@ -1,4 +1,5 @@
 const Character = require('../Models/character');
+const SpaceReplacement = require('../Utils/spaceReplacement');
 
 class CharacterController {
     async getAllCharacters() {
@@ -31,4 +32,21 @@ class CharacterController {
     }
 }
 
-module.exports = CharacterController;
+const getCharacters = async (req, res) => {
+    try {
+        const characterController = new CharacterController();
+        const allCharacters = await characterController.getAllCharacters();
+        const aliveCharacters = await characterController.getAliveCharacters(allCharacters);
+        const modifiedCharacters = SpaceReplacement.modifyCharacterNames(aliveCharacters);
+
+        res.status(200).json(modifiedCharacters);
+    } catch (error) {
+        console.error("Ha ocurrido un error:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+module.exports = {
+    CharacterController,
+    getCharacters
+};

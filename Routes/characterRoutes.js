@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const CharacterController = require('../Controllers/characterController');
+import { Router } from 'express';
+import { getCharacters } from '../Controllers/characterController.js';
 
-router.get('/', CharacterController.getCharacters);
+const router = Router();
 
-module.exports = router;
+router.get('/', getCharacters);
+
+export default router;

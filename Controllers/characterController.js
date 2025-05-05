@@ -1,55 +1,42 @@
-require('dotenv').config();
-const Character = require('../Models/character');
-const SpaceReplacement = require('../Utils/spaceReplacement');
+import 'dotenv/config';
+import fetch from 'node-fetch';
+import Character from '../Models/character.js';
+import SpaceReplacement from '../Utils/spaceReplacement.js';
 
-class CharacterController {
+export default class CharacterController {
     async getAllCharacters() {
         try {
-            const { default: fetch } = await import('node-fetch');
-
-            const apiUrl = process.env.CLIENT_HOST + "character";
-
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            const characters = data.results.map((char) => {
-                return new Character(char.id, char.name, char.status, char.gender);
-            });
-
-            return characters;
-
-        } catch (error) {
-            console.error("Error al obtener los personajes");
-            throw new Error("No se pudieron obtener los personajes");
+            const apiUrl = `${process.env.CLIENT_HOST}character`;
+            const res = await fetch(apiUrl);
+            const data = await res.json();
+            return data.results.map(
+                ({ id, name, status, gender }) => new Character(id, name, status, gender)
+            );
+        } catch (err) {
+            console.error('Error al obtener los personajes', err);
+            throw new Error('No se pudieron obtener los personajes');
         }
     }
 
     async getAliveCharacters(characters) {
         try {
-            const aliveCharacters = characters.filter((char) => char.status === "Alive");
-            return aliveCharacters;
-
-        } catch (error) {
-            console.error("Error al obtener los personajes");
-            throw new Error("No se pudieron obtener los personajes");
+            return characters.filter(char => char.status === 'Alive');
+        } catch (err) {
+            console.error('Error al filtrar personajes vivos', err);
+            throw new Error('No se pudieron filtrar los personajes vivos');
         }
     }
 }
 
-const getCharacters = async (req, res) => {
+export const getCharacters = async (req, res) => {
     try {
-        const characterController = new CharacterController();
-        const allCharacters = await characterController.getAllCharacters();
-        const aliveCharacters = await characterController.getAliveCharacters(allCharacters);
-        const modifiedCharacters = SpaceReplacement.modifyCharacterNames(aliveCharacters);
-
-        res.status(200).json(modifiedCharacters);
+        const controller = new CharacterController();
+        const all = await controller.getAllCharacters();
+        const alive = await controller.getAliveCharacters(all);
+        const modified = SpaceReplacement.modifyCharacterNames(alive);
+        res.status(200).json(modified);
     } catch (error) {
-        console.error("Ha ocurrido un error:", error.message);
+        console.error('Ha ocurrido un error:', error.message);
         res.status(500).json({ error: error.message });
     }
-}
-
-module.exports = {
-    CharacterController,
-    getCharacters
 };

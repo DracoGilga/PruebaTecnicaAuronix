@@ -1,11 +1,15 @@
-require('dotenv').config();
-const express = require('express');
+import 'dotenv/config';
+import express from 'express';
+import characterRoutes from './Routes/characterRoutes.js';
+
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 
-app.use('/character', require('./Routes/characterRoutes'));
+app.use('/character', characterRoutes);
 
-app.get("*", (req, res) => { res.status(404).send("Recurso no encontrado") });
+app.all('*', (req, res) => {
+    res.status(404).send('Recurso no encontrado');
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
